@@ -17,7 +17,7 @@ export default function Enemy() {
   // For the rigidbody component
   const body = useRef();
   // Fetch model and a separate texture
-  const { scene, animations, materials } = useGLTF("/enemy.glb");
+  const { scene, animations, materials } = useGLTF("/squidward.glb");
 
   // Skinned meshes cannot be re-used in threejs without cloning them
   const clone = useMemo(() => SkeletonUtils.clone(scene), [scene]);
