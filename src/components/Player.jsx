@@ -7,7 +7,7 @@ All of the assets actions, action-names and clips are available in its output.
 
 import * as THREE from "three";
 import React, { useEffect, useState, useMemo, useRef } from "react";
-import { useGLTF, useAnimations } from "@react-three/drei";
+import { useGLTF, useAnimations, useTexture } from "@react-three/drei";
 import { useGame } from "../stores/useGame";
 import { useGraph } from "@react-three/fiber";
 import { RigidBody, CapsuleCollider } from "@react-three/rapier";
@@ -26,6 +26,7 @@ export default function Enemy() {
 
   // Extract animation actions
   const { ref, actions, names } = useAnimations(animations);
+  const texture = useTexture("/base_color.png");
   const getCharacterPosition = useGame((state) => state.getCurPosition);
 
   const [index, setIndex] = useState(2);
@@ -64,16 +65,45 @@ export default function Enemy() {
       }}
     >
       <CapsuleCollider args={[0.8, 1.2]} position={[0, 0, 0]} />
-      <group ref={ref} dispose={null}>
+      <group ref={ref} dispose={null} scale={0.4} position={[0, -2.0, 0]}>
         <group name="Scene">
           <group name="Armature">
             <skinnedMesh
-              name="Cylinder"
-              geometry={nodes.Cylinder.geometry}
-              material={materials.Black}
-              skeleton={nodes.Cylinder.skeleton}
-            />
-            <primitive object={nodes.Bone} />
+              name="Base"
+              geometry={nodes.Base.geometry}
+              material={materials.BaseColor}
+              skeleton={nodes.Base.skeleton}
+            >
+              <meshStandardMaterial map={texture} map-flipY={false} />
+            </skinnedMesh>
+            <skinnedMesh
+              name="EyeBags"
+              geometry={nodes.EyeBags.geometry}
+              material={materials.BaseColor}
+              skeleton={nodes.EyeBags.skeleton}
+              morphTargetDictionary={nodes.EyeBags.morphTargetDictionary}
+              morphTargetInfluences={nodes.EyeBags.morphTargetInfluences}
+            >
+              <meshStandardMaterial map={texture} map-flipY={false} />
+            </skinnedMesh>
+            <skinnedMesh
+              name="Eyes"
+              geometry={nodes.Eyes.geometry}
+              material={materials.BaseColor}
+              skeleton={nodes.Eyes.skeleton}
+            >
+              <meshStandardMaterial map={texture} map-flipY={false} />
+            </skinnedMesh>
+            <skinnedMesh
+              name="Pupils"
+              geometry={nodes.Pupils.geometry}
+              material={materials.BaseColor}
+              skeleton={nodes.Pupils.skeleton}
+            >
+              <meshStandardMaterial map={texture} map-flipY={false} />
+            </skinnedMesh>
+            <primitive object={nodes.Spine} />
+            <primitive object={nodes.Hips} />
           </group>
         </group>
       </group>
