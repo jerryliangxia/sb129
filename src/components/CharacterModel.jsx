@@ -6,6 +6,7 @@ All of the assets actions, action-names and clips are available in its output.
 */
 
 import * as THREE from "three";
+import { useKeyboardControls } from "@react-three/drei";
 import React, { useEffect, useState, useMemo, useRef } from "react";
 import { useGLTF, useAnimations, useTexture } from "@react-three/drei";
 import { useGame } from "../stores/useGame";
@@ -13,7 +14,7 @@ import { useGraph } from "@react-three/fiber";
 import { RigidBody, CapsuleCollider } from "@react-three/rapier";
 import { SkeletonUtils } from "three-stdlib";
 
-export default function Enemy() {
+export default function CharacterModel() {
   // For the rigidbody component
   const body = useRef();
   // Fetch model and a separate texture
@@ -30,6 +31,31 @@ export default function Enemy() {
   const getCharacterPosition = useGame((state) => state.getCurPosition);
 
   const [index, setIndex] = useState(2);
+
+  let animationSet = {
+    idle: "Idle",
+    walk: "Walk",
+    run: "Run",
+    jump: "JumpStart",
+    jumpIdle: "JumpIdle",
+    jumpLand: "JumpLand",
+    fall: "JumpIdle",
+    action1: "JumpIdle",
+    action2: "JumpIdle",
+    action3: "JumpLand",
+    action4: "RArmAttack",
+    action5: "Fall",
+    action6: "Death",
+  };
+  const initializeAnimationSet = useGame(
+    (state) => state.initializeAnimationSet
+  );
+
+  // Bone filtering
+  useEffect(() => {
+    // Initialize animation set
+    initializeAnimationSet(animationSet);
+  }, [actions, initializeAnimationSet]);
 
   useEffect(() => {
     const action = actions[names[index]];
@@ -64,8 +90,9 @@ export default function Enemy() {
         console.log("here");
       }}
     >
-      <CapsuleCollider args={[0.8, 1.2]} position={[0, 0, 0]} />
-      <group ref={ref} dispose={null} scale={0.4} position={[0, -2.0, 0]}>
+      {/* <CapsuleCollider args={[0.8, 1.2]} position={[0, 0, 0]} /> */}
+      {/* <group ref={ref} dispose={null} scale={0.4} position={[0, -2.0, 0]}> */}
+      <group ref={ref} dispose={null} scale={0.4} position={[0, -0.5, 0]}>
         <group name="Scene">
           <group name="Armature">
             <skinnedMesh
