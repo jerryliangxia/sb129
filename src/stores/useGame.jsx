@@ -6,7 +6,7 @@ export const useGame = create(
   subscribeWithSelector((set, get) => {
     return {
       // Canvas
-      overlayVisible: true,
+      overlayVisible: false,
       setOverlayVisible: (visible) => {
         set(() => ({ overlayVisible: visible }));
       },

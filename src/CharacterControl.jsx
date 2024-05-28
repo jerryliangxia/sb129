@@ -16,14 +16,14 @@ export { CharacterAnimation } from "./CharacterAnimation";
 
 const getMovingDirection = (forward, backward, leftward, rightward, pivot) => {
   if (!forward && !backward && !leftward && !rightward) return null;
-  if (forward && leftward) return pivot.rotation.y - Math.PI / 4; // Changed + to -
-  if (forward && rightward) return pivot.rotation.y + Math.PI / 4; // Changed - to +
-  if (backward && leftward) return pivot.rotation.y + Math.PI / 4 + Math.PI; // Changed - to +
-  if (backward && rightward) return pivot.rotation.y - Math.PI / 4 + Math.PI; // Changed + to -
-  if (backward) return pivot.rotation.y; // Removed + Math.PI
-  if (leftward) return pivot.rotation.y - Math.PI / 2; // Changed + to -
-  if (rightward) return pivot.rotation.y + Math.PI / 2; // Changed - to +
-  if (forward) return pivot.rotation.y + Math.PI; // Added + Math.PI
+  if (forward && leftward) return pivot.rotation.y - Math.PI / 4;
+  if (forward && rightward) return pivot.rotation.y + Math.PI / 4;
+  if (backward && leftward) return pivot.rotation.y + Math.PI / 4 + Math.PI;
+  if (backward && rightward) return pivot.rotation.y - Math.PI / 4 + Math.PI;
+  if (backward) return pivot.rotation.y;
+  if (leftward) return pivot.rotation.y - Math.PI / 2;
+  if (rightward) return pivot.rotation.y + Math.PI / 2;
+  if (forward) return pivot.rotation.y + Math.PI;
 };
 
 const CharacterControl = forwardRef(
@@ -57,7 +57,7 @@ const CharacterControl = forwardRef(
 
     // In game variables
     const curHealth = useGame((state) => state.curHealth);
-    const overlayVisible = false;
+    const overlayVisible = useGame((state) => state.overlayVisible);
 
     /**
      * Body collider setup
@@ -577,7 +577,11 @@ const CharacterControl = forwardRef(
         getMovingDirection(forward, backward, leftward, rightward, pivot)
       );
       // Move character to the moving direction
-      if ((forward || backward || leftward || rightward) && curHealth > 0)
+      if (
+        (forward || backward || leftward || rightward) &&
+        curHealth > 0 &&
+        !overlayVisible
+      )
         moveCharacter(delta, run, slopeAngle, movingObjectVelocity);
 
       // Character current velocity
