@@ -14,7 +14,7 @@ import { useGraph } from "@react-three/fiber";
 import { RigidBody, CapsuleCollider } from "@react-three/rapier";
 import { SkeletonUtils } from "three-stdlib";
 
-export default function CharacterModel() {
+export default function CharacterModel(props) {
   // For the rigidbody component
   const body = useRef();
   // Fetch model and a separate texture
@@ -77,63 +77,47 @@ export default function CharacterModel() {
   }, [index, actions, names, setIndex]);
 
   return (
-    <RigidBody
-      ref={body}
-      userData={{ type: "enemy" }}
-      colliders={false}
-      canSleep={false}
-      mass={1.0}
-      linearDamping={1}
-      angularDamping={0.5}
-      enabledRotations={[false, false, false]}
-      onCollisionEnter={() => {
-        console.log("here");
-      }}
-    >
-      {/* <CapsuleCollider args={[0.8, 1.2]} position={[0, 0, 0]} /> */}
-      {/* <group ref={ref} dispose={null} scale={0.4} position={[0, -2.0, 0]}> */}
-      <group ref={ref} dispose={null} scale={0.4} position={[0, -0.5, 0]}>
-        <group name="Scene">
-          <group name="Armature">
-            <skinnedMesh
-              name="Base"
-              geometry={nodes.Base.geometry}
-              material={materials.BaseColor}
-              skeleton={nodes.Base.skeleton}
-            >
-              <meshStandardMaterial map={texture} map-flipY={false} />
-            </skinnedMesh>
-            <skinnedMesh
-              name="EyeBags"
-              geometry={nodes.EyeBags.geometry}
-              material={materials.BaseColor}
-              skeleton={nodes.EyeBags.skeleton}
-              morphTargetDictionary={nodes.EyeBags.morphTargetDictionary}
-              morphTargetInfluences={nodes.EyeBags.morphTargetInfluences}
-            >
-              <meshStandardMaterial map={texture} map-flipY={false} />
-            </skinnedMesh>
-            <skinnedMesh
-              name="Eyes"
-              geometry={nodes.Eyes.geometry}
-              material={materials.BaseColor}
-              skeleton={nodes.Eyes.skeleton}
-            >
-              <meshStandardMaterial map={texture} map-flipY={false} />
-            </skinnedMesh>
-            <skinnedMesh
-              name="Pupils"
-              geometry={nodes.Pupils.geometry}
-              material={materials.BaseColor}
-              skeleton={nodes.Pupils.skeleton}
-            >
-              <meshStandardMaterial map={texture} map-flipY={false} />
-            </skinnedMesh>
-            <primitive object={nodes.Spine} />
-            <primitive object={nodes.Hips} />
-          </group>
+    <group ref={body} dispose={null} scale={0.4} position={[0, -0.5, 0]}>
+      <group name="Scene">
+        <group name="Armature">
+          <skinnedMesh
+            name="Base"
+            geometry={nodes.Base.geometry}
+            material={materials.BaseColor}
+            skeleton={nodes.Base.skeleton}
+          >
+            <meshStandardMaterial map={texture} map-flipY={false} />
+          </skinnedMesh>
+          <skinnedMesh
+            name="EyeBags"
+            geometry={nodes.EyeBags.geometry}
+            material={materials.BaseColor}
+            skeleton={nodes.EyeBags.skeleton}
+            morphTargetDictionary={nodes.EyeBags.morphTargetDictionary}
+            morphTargetInfluences={nodes.EyeBags.morphTargetInfluences}
+          >
+            <meshStandardMaterial map={texture} map-flipY={false} />
+          </skinnedMesh>
+          <skinnedMesh
+            name="Eyes"
+            geometry={nodes.Eyes.geometry}
+            material={materials.BaseColor}
+            skeleton={nodes.Eyes.skeleton}
+          >
+            <meshStandardMaterial map={texture} map-flipY={false} />
+          </skinnedMesh>
+          <skinnedMesh
+            name="Pupils"
+            geometry={nodes.Pupils.geometry}
+            material={materials.BaseColor}
+            skeleton={nodes.Pupils.skeleton}
+          >
+            <meshStandardMaterial map={texture} map-flipY={false} />
+          </skinnedMesh>
+          <primitive object={nodes.Spine} />
+          <primitive object={nodes.Hips} />
         </group>
       </group>
-    </RigidBody>
+    </group>
   );
 }
