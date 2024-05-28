@@ -77,47 +77,50 @@ export default function CharacterModel(props) {
   }, [index, actions, names, setIndex]);
 
   return (
-    <group ref={body} dispose={null} scale={0.4} position={[0, -0.5, 0]}>
-      <group name="Scene">
-        <group name="Armature">
-          <skinnedMesh
-            name="Base"
-            geometry={nodes.Base.geometry}
-            material={materials.BaseColor}
-            skeleton={nodes.Base.skeleton}
-          >
-            <meshStandardMaterial map={texture} map-flipY={false} />
-          </skinnedMesh>
-          <skinnedMesh
-            name="EyeBags"
-            geometry={nodes.EyeBags.geometry}
-            material={materials.BaseColor}
-            skeleton={nodes.EyeBags.skeleton}
-            morphTargetDictionary={nodes.EyeBags.morphTargetDictionary}
-            morphTargetInfluences={nodes.EyeBags.morphTargetInfluences}
-          >
-            <meshStandardMaterial map={texture} map-flipY={false} />
-          </skinnedMesh>
-          <skinnedMesh
-            name="Eyes"
-            geometry={nodes.Eyes.geometry}
-            material={materials.BaseColor}
-            skeleton={nodes.Eyes.skeleton}
-          >
-            <meshStandardMaterial map={texture} map-flipY={false} />
-          </skinnedMesh>
-          <skinnedMesh
-            name="Pupils"
-            geometry={nodes.Pupils.geometry}
-            material={materials.BaseColor}
-            skeleton={nodes.Pupils.skeleton}
-          >
-            <meshStandardMaterial map={texture} map-flipY={false} />
-          </skinnedMesh>
-          <primitive object={nodes.Spine} />
-          <primitive object={nodes.Hips} />
+    <>
+      {/* <CapsuleCollider args={[0.4, 0.35]} position={[0, 0.0, 0]} /> */}
+      <group ref={body} dispose={null} scale={0.4} position={[0, -0.5, 0]}>
+        <group name="Scene">
+          <group name="Armature">
+            <skinnedMesh
+              name="Base"
+              geometry={nodes.Base.geometry}
+              material={materials.BaseColor}
+              skeleton={nodes.Base.skeleton}
+            >
+              <meshStandardMaterial map={texture} map-flipY={false} />
+            </skinnedMesh>
+            <skinnedMesh
+              name="EyeBags"
+              geometry={nodes.EyeBags.geometry}
+              material={materials.BaseColor}
+              skeleton={nodes.EyeBags.skeleton}
+              morphTargetDictionary={nodes.EyeBags.morphTargetDictionary}
+              morphTargetInfluences={nodes.EyeBags.morphTargetInfluences}
+            >
+              <meshStandardMaterial map={texture} map-flipY={false} />
+            </skinnedMesh>
+            <skinnedMesh
+              name="Eyes"
+              geometry={nodes.Eyes.geometry}
+              material={materials.BaseColor}
+              skeleton={nodes.Eyes.skeleton}
+            >
+              <meshStandardMaterial map={texture} map-flipY={false} />
+            </skinnedMesh>
+            <skinnedMesh
+              name="Pupils"
+              geometry={nodes.Pupils.geometry}
+              material={materials.BaseColor}
+              skeleton={nodes.Pupils.skeleton}
+            >
+              <meshStandardMaterial map={texture} map-flipY={false} />
+            </skinnedMesh>
+            <primitive object={nodes.Spine} />
+            <primitive object={nodes.Hips} />
+          </group>
         </group>
       </group>
-    </group>
+    </>
   );
 }

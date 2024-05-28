@@ -44,8 +44,6 @@ const CharacterControl = forwardRef(
       camZoomSpeed = 1,
       camCollision = true,
       camCollisionOffset = 0.7,
-      springK = 1.2, // extra props defined from top
-      dampingC = 0.08,
       gravityScale = 1,
       ...props
     },
@@ -108,8 +106,8 @@ const CharacterControl = forwardRef(
     const rayLength = capsuleRadius + 2;
     const rayDir = { x: 0, y: -1, z: 0 };
     const floatingDis = capsuleRadius + floatHeight;
-    // const springK = 1.2; // already passed through as props
-    // const dampingC = 0.08; // already passed through as props
+    const springK = 1.2; // already passed through as props
+    const dampingC = 0.08; // already passed through as props
 
     // Slope Ray setups
     const showSlopeRayOrigin = false;
@@ -245,7 +243,7 @@ const CharacterControl = forwardRef(
     let rayHit = null;
 
     /**Test shape ray */
-    // const shape = new rapier.Capsule(0.2,0.1)
+    // const shape = new rapier.Capsule(0.2, 0.1);
 
     /**
      * Slope detection ray setup
@@ -633,7 +631,16 @@ const CharacterControl = forwardRef(
           (camTargetPos.y || capsuleHalfHeight + capsuleRadius / 2),
         currentPos.z + camTargetPos.z
       );
-      pivot.position.lerp(pivotPosition, 1 - Math.exp(-camFollowMult * delta));
+      // Clamp delta to avoid large unexpected jumps
+      const clampedDelta = Math.min(delta, 0.1); // Clamp delta to a maximum of 0.1 seconds
+
+      // Adjust camFollowMult if necessary
+      const adjustedCamFollowMult = 0.05; // Example value, adjust based on testing
+
+      // Use a simpler linear interpolation factor for demonstration
+      const lerpFactor = clampedDelta * adjustedCamFollowMult;
+
+      pivot.position.lerp(pivotPosition, 1 - lerpFactor);
       state.camera.lookAt(pivot.position);
 
       /**
@@ -797,9 +804,9 @@ const CharacterControl = forwardRef(
         if (canJump) {
           // Round the slope angle to 2 decimal places
           slopeAngle = Number(
-            Math.atan((rayHit.toi - slopeRayHit.toi) / rayOriginOffset).toFixed(
-              2
-            )
+            Math.atan(
+              (rayHit.toi - slopeRayHit.toi) / slopeRayOriginOffset
+            ).toFixed(2)
           );
         } else {
           slopeAngle = null;
@@ -958,7 +965,7 @@ const CharacterControl = forwardRef(
             <boxGeometry args={[0.15, 0.15, 0.15]} />
           </mesh>
           {/* Character model */}
-          {children}
+          {/* {children} */}
         </group>
       </RigidBody>
     );
