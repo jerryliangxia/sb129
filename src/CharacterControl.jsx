@@ -14,17 +14,16 @@ import * as THREE from "three";
 export { useFollowCam } from "./hooks/useFollowCam";
 export { CharacterAnimation } from "./CharacterAnimation";
 
-// Retrieve current moving direction of the character
 const getMovingDirection = (forward, backward, leftward, rightward, pivot) => {
   if (!forward && !backward && !leftward && !rightward) return null;
-  if (forward && leftward) return pivot.rotation.y + Math.PI / 4;
-  if (forward && rightward) return pivot.rotation.y - Math.PI / 4;
-  if (backward && leftward) return pivot.rotation.y - Math.PI / 4 + Math.PI;
-  if (backward && rightward) return pivot.rotation.y + Math.PI / 4 + Math.PI;
-  if (backward) return pivot.rotation.y + Math.PI;
-  if (leftward) return pivot.rotation.y + Math.PI / 2;
-  if (rightward) return pivot.rotation.y - Math.PI / 2;
-  if (forward) return pivot.rotation.y;
+  if (forward && leftward) return pivot.rotation.y - Math.PI / 4; // Changed + to -
+  if (forward && rightward) return pivot.rotation.y + Math.PI / 4; // Changed - to +
+  if (backward && leftward) return pivot.rotation.y + Math.PI / 4 + Math.PI; // Changed - to +
+  if (backward && rightward) return pivot.rotation.y - Math.PI / 4 + Math.PI; // Changed + to -
+  if (backward) return pivot.rotation.y; // Removed + Math.PI
+  if (leftward) return pivot.rotation.y - Math.PI / 2; // Changed + to -
+  if (rightward) return pivot.rotation.y + Math.PI / 2; // Changed - to +
+  if (forward) return pivot.rotation.y + Math.PI; // Added + Math.PI
 };
 
 const CharacterControl = forwardRef(
@@ -36,9 +35,9 @@ const CharacterControl = forwardRef(
       floatHeight = 0.3,
       characterInitDir = 0,
       // Follow camera setups
-      camInitDis = -5,
-      camMaxDis = -7,
-      camMinDis = -0.7,
+      camInitDis = -2,
+      camMaxDis = -2,
+      camMinDis = -2,
       camInitDir = { x: 0, y: 0, z: 0 }, // in rad
       camTargetPos = { x: 0, y: 0, z: 0 },
       camMoveSpeed = 1,
@@ -58,7 +57,7 @@ const CharacterControl = forwardRef(
 
     // In game variables
     const curHealth = useGame((state) => state.curHealth);
-    const overlayVisible = useGame((state) => state.overlayVisible);
+    const overlayVisible = false;
 
     /**
      * Body collider setup
@@ -410,9 +409,7 @@ const CharacterControl = forwardRef(
       bodyFacingVecOnY.set(bodyFacingVec.x, 0, bodyFacingVec.z);
       bodyBalanceVecOnZ.set(bodyBalanceVec.x, bodyBalanceVec.y, 0);
 
-      // If is camera based movement (always is)
-      modelEuler.y = pivot.rotation.y;
-      pivot.getWorldDirection(modelFacingVec);
+      characterModelIndicator.getWorldDirection(modelFacingVec);
       const crossVecOnX = vectorY.clone().cross(bodyBalanceVecOnX);
       const crossVecOnY = modelFacingVec.clone().cross(bodyFacingVecOnY);
       const crossVecOnZ = vectorY.clone().cross(bodyBalanceVecOnZ);
@@ -527,40 +524,40 @@ const CharacterControl = forwardRef(
       };
     });
 
-    // // TODO what is this
-    // useEffect(() => {
-    //   // Lock character rotations at Y axis
-    //   characterRef.current.setEnabledRotations(
-    //     autoBalance ? true : false,
-    //     autoBalance ? true : false,
-    //     autoBalance ? true : false,
-    //     false
-    //   );
+    // TODO what is this
+    useEffect(() => {
+      // Lock character rotations at Y axis
+      characterRef.current.setEnabledRotations(
+        autoBalance ? true : false,
+        autoBalance ? true : false,
+        autoBalance ? true : false,
+        false
+      );
 
-    //   // Reset character quaternion
-    //   return () => {
-    //     if (characterRef.current && characterModelRef.current) {
-    //       characterModelRef.current.quaternion.set(0, 0, 0, 1);
-    //       characterRef.current.setRotation({ x: 0, y: 0, z: 0, w: 1 }, false);
-    //     }
-    //   };
-    // }, [autoBalance]);
+      // Reset character quaternion
+      return () => {
+        if (characterRef.current && characterModelRef.current) {
+          characterModelRef.current.quaternion.set(0, 0, 0, 1);
+          characterRef.current.setRotation({ x: 0, y: 0, z: 0, w: 1 }, false);
+        }
+      };
+    }, [autoBalance]);
 
-    // // TODO is this useful
-    // useEffect(() => {
-    //   // Initialize character facing direction
-    //   modelEuler.y = characterInitDir;
-    //   // Initialize camera facing direction
-    //   pivot.rotation.x = camInitDir.x;
-    //   pivot.rotation.y = camInitDir.y;
-    //   pivot.rotation.z = camInitDir.z;
+    // TODO is this useful
+    useEffect(() => {
+      // Initialize character facing direction
+      modelEuler.y = characterInitDir;
+      // Initialize camera facing direction
+      pivot.rotation.x = camInitDir.x;
+      pivot.rotation.y = camInitDir.y;
+      pivot.rotation.z = camInitDir.z;
 
-    //   window.addEventListener("visibilitychange", sleepCharacter);
+      window.addEventListener("visibilitychange", sleepCharacter);
 
-    //   return () => {
-    //     window.removeEventListener("visibilitychange", sleepCharacter);
-    //   };
-    // }, []);
+      return () => {
+        window.removeEventListener("visibilitychange", sleepCharacter);
+      };
+    }, []);
 
     // Big movement function
     useFrame((state, delta) => {
@@ -579,13 +576,8 @@ const CharacterControl = forwardRef(
         movingDirection === null ? modelEuler.y : movingDirection)(
         getMovingDirection(forward, backward, leftward, rightward, pivot)
       );
-
       // Move character to the moving direction
-      if (
-        (forward || backward || leftward || rightward) &&
-        curHealth > 0 &&
-        !overlayVisible
-      )
+      if ((forward || backward || leftward || rightward) && curHealth > 0)
         moveCharacter(delta, run, slopeAngle, movingObjectVelocity);
 
       // Character current velocity
@@ -626,17 +618,7 @@ const CharacterControl = forwardRef(
           delta * turnSpeed
         );
       }
-
-      // If autobalance is off, rotate character model itself
-      if (!autoBalance) {
-        if (getCameraBased().isCameraBased) {
-          characterModelRef.current.quaternion.copy(pivot.quaternion);
-        } else {
-          characterModelRef.current.quaternion.copy(
-            characterModelIndicator.quaternion
-          );
-        }
-      }
+      // REMOVED CODE - Autobalance is always on
 
       /**
        *  Camera movement
@@ -924,7 +906,7 @@ const CharacterControl = forwardRef(
         (forward || backward || leftward || rightward) &&
         !holdingSpaceBar
       ) {
-        run || runState ? runAnimation() : walkAnimation();
+        run ? runAnimation() : walkAnimation();
       } else if (!canJump) {
         jumpIdleAnimation();
       }
@@ -948,33 +930,6 @@ const CharacterControl = forwardRef(
               e.totalForce.y,
               e.totalForce.z
             );
-          }
-        }}
-        onCollisionEnter={(e) => {
-          if (
-            curAnimation != "Attack20Clarinet" &&
-            e.collider.parent().userData.type == "enemy"
-          ) {
-            if (curHealth > 0 && !overlayVisible) {
-              setCurAnimation(animationSet.action3);
-              const currentPosition = new THREE.Vector3(...getCurPosition());
-              const enemyPosition = new THREE.Vector3(
-                e.rigidBodyObject.position.x,
-                e.rigidBodyObject.position.y,
-                e.rigidBodyObject.position.z
-              );
-
-              // Subtract the enemy position from the current position
-              const resultVector = currentPosition.sub(enemyPosition);
-
-              const impulseVector = resultVector.multiplyScalar(5);
-
-              // Apply the impulse to the character's rigidbody
-              if (characterRef.current) {
-                characterRef.current.applyImpulse(impulseVector, true);
-                setCurHealth(curHealth - 1);
-              }
-            }
           }
         }}
         onCollisionExit={() => bodyContactForce.set(0, 0, 0)}
