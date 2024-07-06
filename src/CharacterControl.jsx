@@ -631,16 +631,7 @@ const CharacterControl = forwardRef(
           (camTargetPos.y || capsuleHalfHeight + capsuleRadius / 2),
         currentPos.z + camTargetPos.z
       );
-      // Clamp delta to avoid large unexpected jumps
-      const clampedDelta = Math.min(delta, 0.1); // Clamp delta to a maximum of 0.1 seconds
-
-      // Adjust camFollowMult if necessary
-      const adjustedCamFollowMult = 0.05; // Example value, adjust based on testing
-
-      // Use a simpler linear interpolation factor for demonstration
-      const lerpFactor = clampedDelta * adjustedCamFollowMult;
-
-      pivot.position.lerp(pivotPosition, 1 - lerpFactor);
+      pivot.position.lerp(pivotPosition, 1 - Math.exp(-camFollowMult * delta));
       state.camera.lookAt(pivot.position);
 
       /**
@@ -965,7 +956,7 @@ const CharacterControl = forwardRef(
             <boxGeometry args={[0.15, 0.15, 0.15]} />
           </mesh>
           {/* Character model */}
-          {/* {children} */}
+          {children}
         </group>
       </RigidBody>
     );
