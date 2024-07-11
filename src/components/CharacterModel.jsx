@@ -14,7 +14,7 @@ import { useGraph } from "@react-three/fiber";
 import { RigidBody, CapsuleCollider } from "@react-three/rapier";
 import { SkeletonUtils } from "three-stdlib";
 
-export default function CharacterModel() {
+export default function CharacterModel(props) {
   // For the rigidbody component
   const body = useRef();
   // Fetch model and a separate texture
@@ -77,22 +77,9 @@ export default function CharacterModel() {
   }, [index, actions, names, setIndex]);
 
   return (
-    <RigidBody
-      ref={body}
-      userData={{ type: "enemy" }}
-      colliders={false}
-      canSleep={false}
-      mass={1.0}
-      linearDamping={1}
-      angularDamping={0.5}
-      enabledRotations={[false, false, false]}
-      onCollisionEnter={() => {
-        console.log("here");
-      }}
-    >
-      {/* <CapsuleCollider args={[0.8, 1.2]} position={[0, 0, 0]} /> */}
-      {/* <group ref={ref} dispose={null} scale={0.4} position={[0, -2.0, 0]}> */}
-      <group ref={ref} dispose={null} scale={0.4} position={[0, -0.5, 0]}>
+    <>
+      {/* <CapsuleCollider args={[0.4, 0.35]} position={[0, 0.0, 0]} /> */}
+      <group ref={body} dispose={null} scale={0.4} position={[0, -0.5, 0]}>
         <group name="Scene">
           <group name="Armature">
             <skinnedMesh
@@ -134,6 +121,6 @@ export default function CharacterModel() {
           </group>
         </group>
       </group>
-    </RigidBody>
+    </>
   );
 }

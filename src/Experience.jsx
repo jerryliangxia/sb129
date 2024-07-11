@@ -1,8 +1,9 @@
 import Enemy from "./components/Enemy";
 import CharacterModel from "./components/CharacterModel";
 import { Physics, RigidBody } from "@react-three/rapier";
-import { KeyboardControls } from "@react-three/drei";
+import { Grid, KeyboardControls } from "@react-three/drei";
 import CharacterControl from "./CharacterControl";
+import { Floor } from "./components/Floor";
 
 export default function Experience() {
   /**
@@ -31,12 +32,7 @@ export default function Experience() {
             <CharacterModel />
           </CharacterControl>
         </KeyboardControls>
-        <RigidBody type="fixed">
-          <mesh receiveShadow position-y={-1.25}>
-            <boxGeometry args={[10, 0.5, 10]} />
-            <meshStandardMaterial color="greenyellow" />
-          </mesh>
-        </RigidBody>
+        <Floor />
       </Physics>
     </>
   );

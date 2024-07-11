@@ -91,14 +91,12 @@ export const useFollowCam = function (props) {
    */
   const cameraCollisionDetect = (delta) => {
     // Update collision detect ray origin and pointing direction
-    // Which is from pivot point to camera position
     cameraRayOrigin.copy(pivot.position);
     camera.getWorldPosition(cameraPosition);
     cameraRayDir.subVectors(cameraPosition, pivot.position);
 
     // casting ray hit, if object in between character and camera,
     // change the smallestDistance to the ray hit toi
-    // otherwise the smallestDistance is same as camera original position (originZDis)
     intersects = camRayCast.intersectObjects(intersectObjects);
     if (intersects.length && intersects[0].distance <= -originZDis) {
       smallestDistance =
